@@ -1,0 +1,32 @@
+# Entorno y Secretos
+.env
+*.env.local
+
+# Datos de Mapas y Tiles de Valhalla (Muy pesados para Git)
+valhalla_data/*.osm.pbf
+valhalla_data/valhalla_tiles/
+valhalla_data/valhalla.json
+valhalla_data/admins.sqlite
+valhalla_data/extract.tar
+valhalla_data/tiles/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+build/
+dist/
+*.egg-info/
+
+# Logs y temporales
+*.log
+*.npy
+.cache/
+.DS_Store
+Thumbs.db
+
