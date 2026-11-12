@@ -80,29 +80,34 @@ async def solve_vroom(
             s_lat = depot_lat
             s_lon = depot_lon
 
-        # Determinar punto de fin
-        if fleet_obj and fleet_obj.end_location:
+        # Determinar punto de fin solo si está configurado explícitamente
+        has_explicit_end = False
+        e_lat = None
+        e_lon = None
+        if fleet_obj and fleet_obj.end_location and fleet_obj.end_location.get_lat() is not None:
             e_lat = fleet_obj.end_location.get_lat()
             e_lon = fleet_obj.end_location.get_lon()
-        else:
-            e_lat = s_lat
-            e_lon = s_lon
+            has_explicit_end = True
 
         # Capacidad configurable por vehículo o fallback global
         v_cap = fleet_obj.capacity if (fleet_obj and fleet_obj.capacity and fleet_obj.capacity > 0) else max_capacity
         start_sec = parse_time_to_seconds(fleet_obj.start_time if (fleet_obj and fleet_obj.start_time) else "08:00")
         end_sec = parse_time_to_seconds(fleet_obj.end_time if (fleet_obj and fleet_obj.end_time) else "19:00")
 
-        vroom_vehicles.append({
+        v_data = {
             "id": v_id,
             "start": [s_lon, s_lat],
-            "end": [e_lon, e_lat],
             "capacity": [v_cap],
             "time_window": [start_sec, end_sec],
             "costs": {
                 "fixed": fixed_cost  # Penalización alta para forzar el llenado al 100% de los camiones utilizados
             }
-        })
+        }
+
+        if has_explicit_end:
+            v_data["end"] = [e_lon, e_lat]
+
+        vroom_vehicles.append(v_data)
 
         if fleet_obj:
             fleet_map[v_id] = fleet_obj

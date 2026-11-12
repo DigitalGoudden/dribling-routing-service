@@ -206,8 +206,12 @@ async def optimize_route(request: OptimizeRequest, authorized: bool = Depends(ve
             if not stops_list:
                 continue
 
-            # Retorno al depot
-            points_for_geometry.append({"lat": depot_lat, "lon": depot_lon})
+            # Retorno al depot solo si el vehículo tiene punto de fin explícito
+            if original_fleet and original_fleet.end_location and original_fleet.end_location.get_lat() is not None:
+                points_for_geometry.append({
+                    "lat": original_fleet.end_location.get_lat(),
+                    "lon": original_fleet.end_location.get_lon()
+                })
 
             # 6. Obtener Geometría Real sobre Asfalto desde Valhalla
             polyline_str, coords_list, real_dur, real_dist = await get_route_geometry(points_for_geometry)
