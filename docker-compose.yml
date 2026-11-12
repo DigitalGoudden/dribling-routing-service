@@ -6,7 +6,7 @@ services:
     ports:
       - "8002:8002"
     volumes:
-      - ./custom_files:/custom_files
+      - ./valhalla_data:/custom_files
     environment:
       - serve_tiles=True
       - build_elevation=False

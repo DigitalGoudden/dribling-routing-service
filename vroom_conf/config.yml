@@ -6,6 +6,10 @@ cliArgs:
   timeout: 300000
   logdir: '..'
   logsize: '100M'
+
+baseurl: '/'
+port: 3000
+
 routingServers:
   valhalla:
     auto:
