@@ -1,50 +1,57 @@
-version: '3.8'
-
 services:
-  # 1. Servidor de Mapas, Matriz y Geometría de Calles
   valhalla:
-    image: gisops/valhalla:latest
+    image: ghcr.io/gis-ops/docker-valhalla/valhalla:latest
     container_name: routing_valhalla
     restart: unless-stopped
-    environment:
-      - build_elevation=False
-      - build_admins=True
-      - use_tiles_ignore_pbf=True
-      - force_rebuild=False
-    volumes:
-      - ./valhalla_data:/custom_files
     ports:
       - "8002:8002"
+    volumes:
+      - ./custom_files:/custom_files
+    environment:
+      - serve_tiles=True
+      - build_elevation=False
+      - tile_extract=False
+      - build_admins=True
+      - build_time_zones=True
+      - use_tiles_ignore_pbf=True
+    networks:
+      - routing_network
 
-  # 2. Motor de Optimización Logística (C++)
   vroom:
-    image: vroom/vroom-docker:v1.14.0
+    image: ghcr.io/vroom-project/vroom-docker:latest
     container_name: routing_vroom
     restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./vroom_conf/config.yml:/conf/config.yml:ro
     environment:
       - VROOM_ROUTER=valhalla
     depends_on:
       - valhalla
-    ports:
-      - "3000:3000"
+    networks:
+      - routing_network
 
-  # 3. Microservicio Python (FastAPI + Algoritmo Radial + Filtro BBOX + Fixed Costs)
   routing_api:
     build:
       context: ./api
       dockerfile: Dockerfile
     container_name: routing_api
     restart: unless-stopped
-    env_file:
-      - .env
+    ports:
+      - "8088:8088"
     environment:
+      - PORT=8088
+      - DEFAULT_COUNTRY=chile
       - VALHALLA_URL=http://valhalla:8002
       - VROOM_URL=http://vroom:3000
-      - ROUTING_COUNTRY=${ROUTING_COUNTRY:-chile}
-      - API_KEY=${API_KEY:-dribling_super_secret_token_2026}
-    ports:
-      - "${PORT:-8088}:8088"
+      - ENVIRONMENT=production
     depends_on:
       - valhalla
       - vroom
+    networks:
+      - routing_network
 
+networks:
+  routing_network:
+    driver: bridge
