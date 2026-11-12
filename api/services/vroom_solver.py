@@ -96,6 +96,7 @@ async def solve_vroom(
 
         v_data = {
             "id": v_id,
+            "profile": "auto",
             "start": [s_lon, s_lat],
             "capacity": [v_cap],
             "time_window": [start_sec, end_sec],
