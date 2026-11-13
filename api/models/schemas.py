@@ -30,6 +30,16 @@ class FleetVehicle(BaseModel):
     start_location: Optional[LatLng] = None
     end_location: Optional[LatLng] = None
     capacity: Optional[int] = 100
+    capacity_weight_kg: Optional[int] = 1500
+    capacity_volume_dm3: Optional[int] = 12000
+    capacity_bultos: Optional[int] = 100
+    caja_largo_cm: Optional[int] = 320
+    caja_ancho_cm: Optional[int] = 180
+    caja_alto_cm: Optional[int] = 190
+    factor_estiba: Optional[float] = 0.85
+    puerta_ancho_cm: Optional[int] = 170
+    puerta_alto_cm: Optional[int] = 180
+    tipo_puerta: Optional[int] = 1
     start_time: Optional[str] = "08:00"
     end_time: Optional[str] = "19:00"
 
@@ -37,6 +47,10 @@ class JobDelivery(BaseModel):
     id: Union[str, int]
     location: LatLng
     amount: Optional[int] = 1
+    weight_kg: Optional[int] = 1
+    volume_dm3: Optional[int] = 10
+    cant_bultos: Optional[int] = 1
+    bultos: Optional[List[Dict[str, Any]]] = None
     service_time: Optional[int] = 180  # 3 minutos por parada
     description: Optional[str] = None
     address: Optional[str] = None
@@ -47,6 +61,7 @@ class OptimizationConfig(BaseModel):
     max_capacity: Optional[int] = 100
     service_time: Optional[int] = 180
     fixed_cost: Optional[int] = 10000
+    use_capacity: Optional[bool] = True
     sweep_batch_size: Optional[int] = 1000
     use_sweep: Optional[bool] = True
     max_radius_km: Optional[float] = 150.0  # Radio máximo alrededor del depot
