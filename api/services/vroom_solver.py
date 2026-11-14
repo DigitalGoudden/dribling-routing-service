@@ -73,8 +73,8 @@ async def solve_vroom(
     max_capacity = config.max_capacity if config.max_capacity is not None else 100
     use_capacity = config.use_capacity if config.use_capacity is not None else True
 
-    # Detectar si el operador realmente gestiona pesos y volúmenes en los pedidos (y si el check está activo)
-    has_custom_dimensions = use_capacity and any(
+    # Detectar si TODAS las órdenes gestionan pesos/volúmenes (si alguna no tiene, es irreal y se degrada a modo estándar)
+    has_custom_dimensions = use_capacity and len(jobs) > 0 and all(
         ((j.weight_kg is not None and j.weight_kg > 0) or 
          (j.volume_dm3 is not None and j.volume_dm3 > 0))
         for j in jobs
