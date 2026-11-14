@@ -42,3 +42,18 @@ def compute_dynamic_bbox(depot_lat: float, depot_lon: float, max_radius_km: floa
 
     return lat_min, lat_max, lon_min, lon_max
 
+
+def parse_time_to_seconds(time_str: str) -> int:
+    """Convierte 'HH:MM', 'HH:MM:SS' o 'YYYY-MM-DD HH:MM:SS' a segundos desde medianoche."""
+    if not time_str:
+        return 28800
+    try:
+        t_part = str(time_str).strip().split(" ")[-1]
+        parts = t_part.split(":")
+        hours = int(parts[0]) if len(parts) > 0 else 8
+        minutes = int(parts[1]) if len(parts) > 1 else 0
+        seconds = int(parts[2]) if len(parts) > 2 else 0
+        return hours * 3600 + minutes * 60 + seconds
+    except Exception:
+        return 28800
+
